@@ -114,10 +114,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (error.status === 422 || error.message.includes('password should be at least 6 characters')) {
           throw new Error('Verifique os dados. O e-mail deve ser válido e a senha precisa ter no mínimo 6 caracteres.');
         }
+        if (error.status === 500 || error.message.includes('Database error saving new user')) {
+          throw new Error('Erro interno do servidor. Tente novamente em alguns minutos ou entre em contato com o suporte.');
+        }
+        if (error.message.includes('unexpected_failure')) {
+          throw new Error('Falha inesperada no cadastro. Verifique sua conexão e tente novamente.');
+        }
       }
       // Para qualquer outro erro, lançamos a mensagem genérica que pode indicar um problema no trigger.
       console.error("Erro no Supabase SignUp:", error);
-      throw new Error('Ocorreu um erro ao criar sua conta. Verifique os dados e tente novamente.');
+      throw new Error('Erro no sistema de cadastro. Tente novamente mais tarde ou entre em contato com o suporte.');
     }
   };
 
